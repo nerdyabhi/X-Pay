@@ -1,12 +1,29 @@
 const express = require('express');
-import { Request, Response } from 'express';
+import { json, Request, Response, urlencoded } from 'express';
 const app = express();
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+// import {connectToDB} from './db/dbConnect';
+
+/** Importing  Routes */
+import userRouter from './routes/userRoutes';
+
+/* Middle Ware Setup */
+app.use(cors());
+app.use(urlencoded({ extended: false }));
+app.use(json());
+app.use(cookieParser());
 
 
-app.get('/', (req: Request, res: Response) => {
-    res.send("Hello world");
-})
+/* Database Connection  */
 
+// connectToDB();
+
+/* Using Routes */
+app.use('/user', userRouter);
+
+
+// Server Listening
 app.listen(3000, () => {
-    return console.log(`Express is listening at http://localhost:3000`);
+    return console.log(`Server is running at http://localhost:3000`);
 });
