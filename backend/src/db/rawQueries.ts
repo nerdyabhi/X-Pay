@@ -42,11 +42,33 @@ const findUserByEmail = async (email: String) => {
         );
 
         return result.rows[0];
-
-
     } catch (err: any) {
         throw err;
     }
 }
 
-export { createUser, findUserById, findUserByEmail };
+
+/* What the payload should look like? ummm.... */
+interface payloadInterface {
+    name: string,
+    email: string,
+    password: string,
+}
+const findAndUpdateUserById = async (userId: Number, payload: payloadInterface) => {
+    const { name, email } = payload;
+
+    const result = await pool.query(
+        `UPDATE users
+        SET name = $1 , email = $2 
+        WHERE user_id = $3 
+        RETURNING *`,
+        [name, email, userId]
+    );
+
+    const updatedUser = result.rows[0];
+    delete updatedUser.password;
+    return updatedUser;
+
+}
+
+export { createUser, findUserById, findUserByEmail, findAndUpdateUserById };
