@@ -61,11 +61,26 @@ const userLogin = async (req: Request, res: Response) => {
 }
 
 /*@ GET /user/profile */
-const userProfile = (req: Request, res: Response) => {
+const userProfile = async (req: Request, res: Response) => {
     const result = getUserProfileSchema.safeParse(req.body);
-    if(!result.success){
-        res.json(400).send("Please send valid data");
+    if (!result.success) {
+
+        res.status(400).json({ message: "Please send valid data", error: result.error.message });
+        return;
     }
+
+    const { email } = req.body;
+    const user = await findUserByEmail(email);
+    delete user.password;
+
+    if (!user) {
+        res.status(401).json({ message: "User Not found for that email" });
+        return;
+    }
+
+    res.status(200).json({ message: "Succesfully found the user : ", user: user })
+    return;
+
 }
 
 // @ POST /user/editProfile

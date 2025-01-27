@@ -18,4 +18,9 @@ const generateAuthToken = async (payload: UserInterface) => {
     return token;
 }
 
-export { generateAuthToken };
+const decodeToken = async(token:string) =>{
+    const decoded = jwt.verify(token , secret);
+    return decoded;
+}
+
+export { generateAuthToken  , decodeToken};
