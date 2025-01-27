@@ -10,4 +10,8 @@ const userLoginSchema = z.object({
     password: z.string().min(6, "Password Should be atleast 6 characters"),
 })
 
-export { userRegistrationSchema, userLoginSchema };
+const getUserProfileSchema = z.object({
+    email: z.string().email("Enter a valid Email"),
+})
+
+export { userRegistrationSchema, userLoginSchema , getUserProfileSchema };

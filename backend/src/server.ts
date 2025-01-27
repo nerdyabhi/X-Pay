@@ -11,7 +11,7 @@ import userRouter from './routes/userRoutes';
 /* Middle Ware Setup */
 app.use(cors());
 app.use(urlencoded({ extended: false }));
-app.use(json());
+app.use(express.json());
 app.use(cookieParser());
 
 

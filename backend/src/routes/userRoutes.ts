@@ -5,7 +5,7 @@ import { userLogin, userSignup, userProfile, editUserProfile } from '../Controll
 
 /* Routes */
 router.post('/signup', userSignup)
-router.post('/signin', userLogin)
+router.post('/login', userLogin)
 
 router.get('/profile', userProfile)
 router.post('/editProfile', editUserProfile)
