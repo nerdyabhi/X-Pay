@@ -1,6 +1,8 @@
 
 import { pool } from "./dbConnect";
 
+
+
 const createUser = async (name: string, email: string, hashedPassword: string, balance: number) => {
 
     try {
@@ -40,7 +42,6 @@ const findUserByEmail = async (email: String) => {
         const result = await pool.query(
             'SELECT * FROM users WHERE email = $1', [email]
         );
-
         return result.rows[0];
     } catch (err: any) {
         throw err;
@@ -116,4 +117,19 @@ const transferMoney = async (senderId: Number, recieverId: Number, amount: Numbe
     }
 }
 
-export { createUser, findUserById, findUserByEmail, findAndUpdateUserById, transferMoney };
+
+const findTransactionsForUser = async (userId: Number) => {
+
+    try {
+        const result = await pool.query(
+            `SELECT * FROM transactions
+            WHERE sender_id = $1 OR receiver_id = $1`,
+            [userId]
+        )
+
+        return result.rows;
+    } catch (err) {
+        throw err;
+    }
+}
+export { createUser, findUserById, findUserByEmail, findAndUpdateUserById, transferMoney, findTransactionsForUser };

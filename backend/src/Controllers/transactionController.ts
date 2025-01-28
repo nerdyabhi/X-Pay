@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { newTransactionSchema } from '../validation/transaction.validation';
-import { findUserByEmail, transferMoney } from '../db/rawQueries';
+import { findTransactionsForUser, findUserByEmail, transferMoney } from '../db/rawQueries';
 
 const sendMoney = async (req: Request, res: Response) => {
     const result = newTransactionSchema.safeParse(req.body);
@@ -39,4 +39,16 @@ const sendMoney = async (req: Request, res: Response) => {
 
 }
 
-export { sendMoney };
+const getTransactionHistory = async (req: Request, res: Response) => {
+    const user = req.body.user;
+
+    try {
+        const result = await findTransactionsForUser(user.user_id);
+        res.status(200).json({ data: result, message: "Here's the list of transactions" });
+        return;
+    } catch (error: any) {
+        res.status(500).json({ error: error?.message || "Something went wrong" });
+    }
+
+}
+export { sendMoney, getTransactionHistory };
