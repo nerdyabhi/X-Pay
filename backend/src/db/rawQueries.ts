@@ -71,4 +71,49 @@ const findAndUpdateUserById = async (userId: Number, payload: payloadInterface) 
 
 }
 
-export { createUser, findUserById, findUserByEmail, findAndUpdateUserById };
+
+
+const transferMoney = async (senderId: Number, recieverId: Number, amount: Number) => {
+    const client = await pool.connect();
+    try {
+        await client.query('BEGIN'); // Begin the transaction.
+
+        // 1. Deduct sender's balance (but check bhi karle )
+        const deductResult = await client.query(
+            `UPDATE users SET balance = balance - $1
+            WHERE user_id = $2 AND balance >=$1
+            RETURNING balance`,
+            [amount, senderId]
+        )
+
+        if (deductResult.rowCount === 0) {
+            throw new Error("Insufficient funds or invalid sender");
+        }
+
+        // 2. Add money to reciver.
+        const addResult = await client.query(
+            `UPDATE users SET balance = balance + $1
+            WHERE user_id = $2
+            RETURNING balance`,
+            [amount, recieverId]
+        );
+
+        // 3. Create transaction record
+        await client.query(
+            `INSERT INTO transactions (amount , sender_id ,  receiver_id)
+            VALUES($1 , $2 , $3 )`,
+            [amount, senderId, recieverId]
+        );
+
+
+        await client.query('COMMIT');
+        return true;
+    } catch (error) {
+        await client.query('ROLLBACK');
+        return false;
+    } finally {
+        client.release();
+    }
+}
+
+export { createUser, findUserById, findUserByEmail, findAndUpdateUserById, transferMoney };

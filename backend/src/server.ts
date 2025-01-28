@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser');
 
 /** Importing  Routes */
 import userRouter from './routes/userRoutes';
+import transactionRouter from './routes/transactionRoute';
 
 /* Middle Ware Setup */
 app.use(cors());
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 /* Using Routes */
 app.use('/user', userRouter);
+app.use('/transaction', transactionRouter);
 
 
 // Server Listening
