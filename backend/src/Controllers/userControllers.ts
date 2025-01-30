@@ -32,7 +32,7 @@ const userSignup = async (req: Request, res: Response) => {
 const userLogin = async (req: Request, res: Response) => {
     const result = userLoginSchema.safeParse(req.body);
     if (!result.success) {
-        res.json(400).json({ message: "Please send valid email and password" });
+        res.status(400).json({ message: "Please send valid email and password", error: result.error.message });
         return;
     }
 
@@ -40,14 +40,14 @@ const userLogin = async (req: Request, res: Response) => {
     try {
         const user = await findUserByEmail(email);
         if (!user) {
-            res.status(400).json({ message: "User Doesn't exist Please login" });
+            res.status(401).json({ message: "User Doesn't exist Please login" });
             return;
         }
         console.log(password, user.password);
 
         const isPasswordSame = await checkPassword(password, user.password);
         if (isPasswordSame === false) {
-            res.status(400).json({ message: "Wrong Password Please try again" });
+            res.status(401).json({ message: "Wrong Password Please try again" });
             return;
         }
 
@@ -62,21 +62,8 @@ const userLogin = async (req: Request, res: Response) => {
 
 /*@ GET /user/profile */
 const userProfile = async (req: Request, res: Response) => {
-    const result = getUserProfileSchema.safeParse(req.body);
-    if (!result.success) {
 
-        res.status(400).json({ message: "Please send valid data", error: result.error.message });
-        return;
-    }
-
-    const { email } = req.body;
-    const user = await findUserByEmail(email);
-
-    if (!user) {
-        res.status(401).json({ message: "User Not found for that email" });
-        return;
-    }
-
+    const user = req.body.user;
     delete user.password;
     res.status(200).json({ message: "Succesfully found the user : ", user: user })
     return;

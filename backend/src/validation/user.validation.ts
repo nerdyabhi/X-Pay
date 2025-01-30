@@ -19,4 +19,4 @@ const getUserProfileSchema = z.object({
     email: z.string().email("Enter a valid Email"),
 })
 
-export { userRegistrationSchema, userLoginSchema , getUserProfileSchema , changeUserDetailsSchema };
+export { userRegistrationSchema, userLoginSchema, getUserProfileSchema, changeUserDetailsSchema };
