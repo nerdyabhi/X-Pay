@@ -1,4 +1,5 @@
 
+import { promise } from "zod";
 import { pool } from "./dbConnect";
 
 
@@ -32,7 +33,7 @@ const findUserById = async (userId: number) => {
         delete user.password;
         return user;
 
-    } catch (err: any) {
+    } catch (err) {
         throw err;
     }
 }
@@ -43,7 +44,7 @@ const findUserByEmail = async (email: String) => {
             'SELECT * FROM users WHERE email = $1', [email]
         );
         return result.rows[0];
-    } catch (err: any) {
+    } catch (err) {
         throw err;
     }
 }
@@ -72,8 +73,14 @@ const findAndUpdateUserById = async (userId: Number, payload: payloadInterface) 
 
 }
 
-
-
+const delay = (ms: number)=>{
+     return new Promise((resolve, reject) => {
+        setTimeout(()=>{
+            resolve("true");
+        } , ms)   
+    });
+}
+// Logic for transfer money: 
 const transferMoney = async (senderId: Number, recieverId: Number, amount: Number) => {
     const client = await pool.connect();
     try {
@@ -90,6 +97,10 @@ const transferMoney = async (senderId: Number, recieverId: Number, amount: Numbe
         if (deductResult.rowCount === 0) {
             throw new Error("Insufficient funds or invalid sender");
         }
+        console.log("Delay Started");
+        
+        await delay(5000);
+        console.log("Delay Ended");
 
         // 2. Add money to reciver.
         const addResult = await client.query(
